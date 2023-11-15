@@ -22,6 +22,8 @@ import { Home, Mailbox, UserManagement } from "../../container";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import SummarizeIcon from "@mui/icons-material/Summarize";
+import { CreateForms } from "../../pages";
 
 const drawerWidth = 240;
 
@@ -144,39 +146,45 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Home", "Forms", "Mailbox", "Users Management"].map(
-            (text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                <ListItemButton
-                  onClick={() => setMenuData(text)} //
+          {[
+            "Home",
+            "Forms",
+            "Mailbox",
+            "Users Management",
+            "Report Builder",
+          ].map((text, index) => (
+            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                onClick={() => setMenuData(text)} //
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
                   sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {text === "Users Management" ? (
-                      <PersonIcon sx={{ color: "white" }} />
-                    ) : text === "Home" ? (
-                      <DashboardIcon sx={{ color: "white" }} />
-                    ) : text === "Forms" ? (
-                      <AddBoxIcon sx={{ color: "white" }} />
-                    ) : (
-                      text === "Mailbox" && <MailIcon sx={{ color: "white" }} />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            )
-          )}
+                  {text === "Users Management" ? (
+                    <PersonIcon sx={{ color: "white" }} />
+                  ) : text === "Home" ? (
+                    <DashboardIcon sx={{ color: "white" }} />
+                  ) : text === "Forms" ? (
+                    <AddBoxIcon sx={{ color: "white" }} />
+                  ) : text === "Report Builder" ? (
+                    <SummarizeIcon sx={{ color: "white" }} />
+                  ) : (
+                    text === "Mailbox" && <MailIcon sx={{ color: "white" }} />
+                  )}
+                </ListItemIcon>
+                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
         <Divider />
       </Drawer>
@@ -185,6 +193,7 @@ export default function MiniDrawer() {
         {menuData === "Home" && <Home />}
         {menuData === "Mailbox" && <Mailbox />}
         {menuData === "Users Management" && <UserManagement />}
+        {menuData === "Forms" && <CreateForms />}
       </Box>
     </Box>
   );
