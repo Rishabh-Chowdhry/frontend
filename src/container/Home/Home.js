@@ -22,6 +22,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axios from "axios";
+import apiClient from "../../Instances/client";
 const data = [
   { name: "Service A", uv: 4000, pv: 2400, amt: 2400 },
   { name: "Service B", uv: 3000, pv: 1398, amt: 2210 },
@@ -59,7 +60,7 @@ const Home = () => {
 
   const sendRequest = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/user", {
+      const res = await apiClient.get("/user", {
         withCredentials: true,
       });
       const data = res.data;
@@ -112,7 +113,7 @@ const Home = () => {
       if (initialDataFetched) {
         refreshToken().then((data) => setUser(data.user));
       }
-    }, 1000);
+    }, 1000 * 10);
 
     // Clear the interval when the component unmounts
     return () => clearInterval(interval);

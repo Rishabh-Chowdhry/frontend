@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { authActions } from "../../stores";
-
+import apiClient from "../../Instances/client";
 const Login = () => {
   const dispatch = useDispatch();
   const history = useNavigate();
+
   // const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   // const username = useSelector((state) => state.auth.username);
   const [inputs, setInputs] = useState({
@@ -22,28 +23,32 @@ const Login = () => {
   };
   const sendRequest = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/api/login", {
+      const res = await apiClient.post("/login", {
         email: inputs.email,
         password: inputs.password,
       });
+
       const data = res.data;
-      return console.log(data);
+
+      // Assuming your API response contains a 'token' field
+      const token = data.token;
+      console.log("Tokenn", token);
+      // Dispatch the login action with the token payload
+      if (token) {
+        sessionStorage.setItem("token", res.data.token);
+        dispatch(authActions.login({ token }));
+      }
+
+      // Log the response data for debugging
+      console.log(data);
+
+      // Redirect to the dashboard
+      history("/dashboard");
     } catch (error) {
       console.log(error); // Log the error for debugging
       throw error; // Throw the error to be caught in the calling code
     }
   };
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     await sendRequest();
-  //     dispatch(authActions.login());
-  //     history.push("/dashboard");
-  //   } catch (error) {
-  //     // Handle errors, perhaps set an error state to display a message to the user
-
-  //   }
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

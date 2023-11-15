@@ -22,7 +22,6 @@ import { Home, Mailbox, UserManagement } from "../../container";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import axios from "axios";
 
 const drawerWidth = 240;
 

@@ -8,7 +8,7 @@ const main = () => {
       <Navbar />
       <Header />
 
-      <Container maxWidth="xl" sx={{ overflowY: "auto" }}>
+      <Container sx={{ overflowY: "auto", height: "100vh", width: "100vw" }}>
         <div
           style={{
             display: "flex",

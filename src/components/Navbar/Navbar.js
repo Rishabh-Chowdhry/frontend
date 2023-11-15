@@ -11,12 +11,13 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import TranslateIcon from "@mui/icons-material/Translate";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
+  const navigator = useNavigate();
   const toggleSearch = () => {
     setShowSearch((prevShowSearch) => !prevShowSearch);
   };
@@ -122,6 +123,7 @@ const Navbar = () => {
             borderRadius: 0,
           },
         }}
+        onClick={() => navigator("/login")}
       >
         <AccountCircleOutlinedIcon />
         <Typography fontSize={"12px"} fontWeight={600}>

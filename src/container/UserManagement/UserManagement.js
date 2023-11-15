@@ -27,38 +27,40 @@ const UserManagement = () => {
     // This function will be implemented based on your specific requirements
   };
   return (
-    <Card>
-      <CardContent>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            <IconButton>
-              <CreateIcon fontSize="large" />
-            </IconButton>
+    <>
+      <Card>
+        <CardContent>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item>
+              <IconButton>
+                <CreateIcon fontSize="large" />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <Typography variant="h6">User Management</Typography>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Typography variant="h6">User Management</Typography>
-          </Grid>
-        </Grid>
 
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            <Button variant="contained" onClick={handleCreateRole}>
-              Create Role
-            </Button>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item>
+              <Button variant="contained" onClick={handleCreateRole}>
+                Create Role
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" onClick={handleSetPermissions}>
+                Set Permissions
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" onClick={handleViewCreatedUser}>
+                View Users
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Button variant="contained" onClick={handleSetPermissions}>
-              Set Permissions
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" onClick={handleViewCreatedUser}>
-              View Users
-            </Button>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
