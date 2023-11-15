@@ -18,10 +18,12 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import { Home, Mailbox } from "../../container";
+import { Home, Mailbox, UserManagement } from "../../container";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import axios from "axios";
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -183,6 +185,7 @@ export default function MiniDrawer() {
         <DrawerHeader />
         {menuData === "Home" && <Home />}
         {menuData === "Mailbox" && <Mailbox />}
+        {menuData === "Users Management" && <UserManagement />}
       </Box>
     </Box>
   );
