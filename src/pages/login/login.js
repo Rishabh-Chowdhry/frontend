@@ -9,8 +9,6 @@ const Login = () => {
   const dispatch = useDispatch();
   const history = useNavigate();
 
-  // const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  // const username = useSelector((state) => state.auth.username);
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -66,6 +64,17 @@ const Login = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
+        <img
+          src="/assets/images/logo.png"
+          style={{
+            width: "30%",
+            height: "auto",
+            marginBottom: "2rem",
+            marginLeft: "35%",
+            marginTop: "5vh",
+          }}
+          alt=""
+        />
         <Box
           marginLeft="auto"
           marginRight="auto"
@@ -75,8 +84,6 @@ const Login = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Typography variant="h2">Login</Typography>
-
           <TextField
             name="email"
             onChange={handleChange}
@@ -85,6 +92,7 @@ const Login = () => {
             variant="outlined"
             placeholder="Email"
             margin="normal"
+            sx={{ width: "100%" }}
           />
           <TextField
             name="password"
@@ -94,9 +102,20 @@ const Login = () => {
             variant="outlined"
             placeholder="Password"
             margin="normal"
+            sx={{ width: "100%" }}
           />
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{ background: "#ff4013", width: "110%", mt: 3 }}
+          >
             Login
+          </Button>
+          <Button variant="text" sx={{ mt: 4 }}>
+            Forgot Password
+          </Button>
+          <Button variant="text" sx={{ mt: 4 }}>
+            Register
           </Button>
         </Box>
       </form>

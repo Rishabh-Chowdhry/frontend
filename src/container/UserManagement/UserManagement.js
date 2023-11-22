@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import { Create as CreateIcon } from "@mui/icons-material";
 import {
   Button,
-  Grid,
-  Typography,
   Card,
   CardContent,
+  Chip,
+  FormControlLabel,
+  Grid,
   IconButton,
   Modal,
-  TextField,
-  RadioGroup,
   Radio,
-  FormControlLabel,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography
 } from "@mui/material";
-import { Create as CreateIcon } from "@mui/icons-material";
-
+import React, { useEffect, useState } from "react";
+import apiClient from "../../Instances/client";
 const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [PermissionModal, setPermissionModal] = useState(false);
@@ -22,22 +24,62 @@ const UserManagement = () => {
   const [permissonName, setPermissionName] = useState("");
   const [description, setDescriotion] = useState("");
   const [Category, setCategory] = useState("");
+  const [permissionlist,setpermissionlist]=useState()
   const [value, setValue] = React.useState("");
-  const handleCreatePermission = () => {
-    // Logic for creating a role
-    // This function will be implemented based on your specific requirements
+const [ViewPermissionModal,setViewPermissionModal]=useState(false);
+const [ViewRoleModal,setViewRoleModal]=useState(false);
+  
+const handleOpenViewRoleModal=()=>{
+  setViewRoleModal(true)
+}
+const handleCloseViewRoleModal=()=>{
+  setViewRoleModal(false)
+}
+const handleOpenViewPermissionModal=()=>{
+  setViewPermissionModal(true)
+}
+const handleCloseViewPermissionModal=()=>{
+  setViewPermissionModal(false)
+}
 
-    // Close the modal after role creation
-    setPermissionModal(false);
-  };
-  const handleCreateRole = () => {
-    // Logic for creating a role
-    // This function will be implemented based on your specific requirements
-    console.log("Role created:", roleName, roleValue);
+const handleViewPermmisonData = async () => {
+  try {
+    console.log("Fetching permissions data...");
+    const response = await apiClient.get("/get-permissions");
+    console.log("API response:", response);
 
-    // Close the modal after role creation
+    setpermissionlist(response.data.permissionsName);
+    console.log("Permission list:", permissionlist);
+  } catch (error) {
+    console.error("Error fetching permissions data:", error);
+  }
+};
+
+useEffect(() => {
+  console.log("List",permissionlist)
+  // Fetch data when the component mounts
+  handleViewPermmisonData ()
+}, []); // Empty dependency array ensures the effect runs only once
+ const handleCreateRole=async()=>{
+  try{
+    const requestData = {
+      roleName: roleName,
+      roleValue: roleValue,
+      // Add other data as needed
+    };
+    console.log("checkk",requestData)
+    const response = await apiClient.post('/create-roles',requestData);
+    console.log(response.data, "Role created successfully");
+
+    // Reset form fields and close the modal after role creation
+    setRoleName("");
+    setRoleValue("");
+ 
     setIsModalOpen(false);
-  };
+   }catch(error){
+    console.error('Error creating Role:', error.message);
+   }
+ }
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -56,7 +98,30 @@ const UserManagement = () => {
   const handleRadioChange = (event) => {
     setValue(event.target.value);
   };
-
+  const handleCreatePermissionModal = async () => {
+    try {
+      const permissionData = {
+        name: permissonName,
+        description: description,
+        category: Category,
+        isActive: true,
+      };
+  
+      const res = await apiClient.post("/create-permissions", permissionData);
+  
+      // Handle the response as needed
+      console.log("Permission created successfully:", res.data);
+  
+      // You might want to do something else with the response, depending on your application
+  
+    } catch (error) {
+      console.error("Error creating permission:", error);
+  
+      // Handle the error appropriately
+      // For example, show an error message to the user or perform additional actions
+  
+    }
+  };
   return (
     <>
       <Card>
@@ -106,14 +171,15 @@ const UserManagement = () => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={handleCreateRole}
+                onClick={handleViewPermmisonData}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
                     backgroundColor: "#0d2e4e",
                     color: "#fff",
                   },
-                }}
+                }
+              }
               >
                 Assign Permissions
               </Button>
@@ -121,7 +187,7 @@ const UserManagement = () => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={handleCreateRole}
+                onClick={handleOpenViewRoleModal}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
@@ -136,7 +202,7 @@ const UserManagement = () => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={handleCreateRole}
+                onClick={handleOpenViewPermissionModal}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
@@ -151,7 +217,6 @@ const UserManagement = () => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={handleCreateRole}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
@@ -221,21 +286,21 @@ const UserManagement = () => {
           <TextField
             label="Name"
             value={permissonName}
-            onChange={(e) => setRoleName(e.target.value)}
+            onChange={(e) => setPermissionName(e.target.value)}
             fullWidth
             margin="normal"
           />
           <TextField
             label="Description"
             value={description}
-            onChange={(e) => setRoleValue(e.target.value)}
+            onChange={(e) => setDescriotion(e.target.value)}
             fullWidth
             margin="normal"
           />
           <TextField
             label="Category"
             value={Category}
-            onChange={(e) => setRoleValue(e.target.value)}
+            onChange={(e) => setCategory(e.target.value)}
             fullWidth
             margin="normal"
           />
@@ -251,11 +316,81 @@ const UserManagement = () => {
             <FormControlLabel value="best" control={<Radio />} label="True" />
             <FormControlLabel value="worst" control={<Radio />} label="False" />
           </RadioGroup>
-          <Button variant="contained" onClick={handleCreateRole}>
+          <Button variant="contained" onClick={handleCreatePermissionModal}>
             Create
           </Button>
         </div>
       </Modal>
+      {/* Permissions View Modal */}
+      <Modal open={ViewPermissionModal} onClose={handleCloseViewPermissionModal}>
+  <div
+    style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "white",
+      padding: "20px",
+    }}
+  >
+    <Typography variant="h6" gutterBottom>
+      View Permissions
+    </Typography>
+   
+    {permissionlist && (
+  <Stack direction={"row"} spacing={1}>
+    {permissionlist.map((permission, index) => (
+      <Chip
+        key={index}
+        label={permission}
+        sx={{
+          backgroundColor: "#ff4013",
+          color: "white",
+        }}
+      >
+        {permission}
+      </Chip>
+    ))}
+  </Stack>
+)}
+  
+  </div>
+</Modal>
+  {/* Role View Modal */}
+  <Modal open={ViewRoleModal} onClose={handleCloseViewRoleModal}>
+  <div
+    style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "white",
+      padding: "20px",
+    }}
+  >
+    <Typography variant="h6" gutterBottom>
+      View Role
+    </Typography>
+   
+    {permissionlist && (
+  <Stack direction={"row"} spacing={1}>
+    {permissionlist.map((permission, index) => (
+      <Chip
+        key={index}
+        label={permission}
+        sx={{
+          backgroundColor: "#ff4013",
+          color: "white",
+        }}
+      >
+        {permission}
+      </Chip>
+    ))}
+  </Stack>
+)}
+  
+  </div>
+</Modal>
     </>
   );
 };
