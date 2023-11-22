@@ -25,6 +25,7 @@ const UserManagement = () => {
   const [description, setDescriotion] = useState("");
   const [Category, setCategory] = useState("");
   const [permissionlist,setpermissionlist]=useState()
+  const [Rolelist,setRolelist]=useState()
   const [value, setValue] = React.useState("");
 const [ViewPermissionModal,setViewPermissionModal]=useState(false);
 const [ViewRoleModal,setViewRoleModal]=useState(false);
@@ -41,7 +42,18 @@ const handleOpenViewPermissionModal=()=>{
 const handleCloseViewPermissionModal=()=>{
   setViewPermissionModal(false)
 }
+const handleViewRoleData=async()=>{
+  try {
+    console.log("Fetching roles data...");
+    const response = await apiClient.get("/get-roles");
+    console.log("API response:", response);
 
+    setRolelist(response.data.roleNames);
+    console.log("Role list:", Rolelist);
+  } catch (error) {
+    console.error("Error fetching permissions data:", error);
+  }  
+}
 const handleViewPermmisonData = async () => {
   try {
     console.log("Fetching permissions data...");
@@ -55,6 +67,11 @@ const handleViewPermmisonData = async () => {
   }
 };
 
+useEffect(() => {
+  console.log("List",Rolelist)
+  // Fetch data when the component mounts
+  handleViewRoleData ()
+}, []); // Empty dependency array ensures the effect runs only once
 useEffect(() => {
   console.log("List",permissionlist)
   // Fetch data when the component mounts
@@ -171,7 +188,7 @@ useEffect(() => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={handleViewPermmisonData}
+                onClick={handleViewRoleData}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
@@ -372,18 +389,18 @@ useEffect(() => {
       View Role
     </Typography>
    
-    {permissionlist && (
+    {Rolelist && (
   <Stack direction={"row"} spacing={1}>
-    {permissionlist.map((permission, index) => (
+    {Rolelist.map((role, index) => (
       <Chip
         key={index}
-        label={permission}
+        label={role}
         sx={{
           backgroundColor: "#ff4013",
           color: "white",
         }}
       >
-        {permission}
+        {role}
       </Chip>
     ))}
   </Stack>
