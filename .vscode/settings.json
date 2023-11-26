@@ -1,3 +1,7 @@
 {
-  "git-blame.gitWebUrl": ""
+  "git-blame.gitWebUrl": "",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.fontFamily": "Fira Code, monospace",
+  "editor.fontSize": 14
 }

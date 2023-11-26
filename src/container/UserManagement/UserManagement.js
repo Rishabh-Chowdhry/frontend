@@ -12,24 +12,34 @@ import {
   RadioGroup,
   Stack,
   TextField,
-  Typography
+  Typography,
+  Select,
+  MenuItem
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import apiClient from "../../Instances/client";
+import { Table } from "../../components";
 const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [PermissionModal, setPermissionModal] = useState(false);
   const [roleName, setRoleName] = useState("");
-  const [roleValue, setRoleValue] = useState("");
+ 
   const [permissonName, setPermissionName] = useState("");
   const [description, setDescriotion] = useState("");
   const [Category, setCategory] = useState("");
   const [permissionlist,setpermissionlist]=useState()
   const [Rolelist,setRolelist]=useState()
   const [value, setValue] = React.useState("");
-const [ViewPermissionModal,setViewPermissionModal]=useState(false);
-const [ViewRoleModal,setViewRoleModal]=useState(false);
-  
+  const [ViewPermissionModal,setViewPermissionModal]=useState(false);
+  const [ViewRoleModal,setViewRoleModal]=useState(false);
+  const [userModal,setUserModal]=useState(false)
+  const [firstname,setFirstname]=useState("")
+  const [lastname,setLastname]=useState("")
+  const [email,setEmail]=useState("")
+  const [role,setRole]=useState("")
+  const [password,setPassword]=useState("")
+  const[phonenumber,setPhonenumber]=useState("")
+  const [companyname,setcompanyname]=useState("")
 const handleOpenViewRoleModal=()=>{
   setViewRoleModal(true)
 }
@@ -81,7 +91,7 @@ useEffect(() => {
   try{
     const requestData = {
       roleName: roleName,
-      roleValue: roleValue,
+ 
       // Add other data as needed
     };
     console.log("checkk",requestData)
@@ -90,7 +100,7 @@ useEffect(() => {
 
     // Reset form fields and close the modal after role creation
     setRoleName("");
-    setRoleValue("");
+    handleViewRoleData();
  
     setIsModalOpen(false);
    }catch(error){
@@ -115,7 +125,9 @@ useEffect(() => {
   const handleRadioChange = (event) => {
     setValue(event.target.value);
   };
+
   const handleCreatePermissionModal = async () => {
+
     try {
       const permissionData = {
         name: permissonName,
@@ -130,7 +142,7 @@ useEffect(() => {
       console.log("Permission created successfully:", res.data);
   
       // You might want to do something else with the response, depending on your application
-  
+      handleViewPermmisonData()
     } catch (error) {
       console.error("Error creating permission:", error);
   
@@ -139,7 +151,36 @@ useEffect(() => {
   
     }
   };
-  return (
+  const handleUserModal=()=>{
+    setUserModal(true);
+    
+  }
+  const handleCloseUserModal=()=>{
+    setUserModal(false);
+    
+  }
+  const createUser = async () => {
+    try {
+      const data = {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        password: password,
+        phonenumber: phonenumber,
+        role: role.toString(),
+        companyname: companyname,
+      };
+  
+      const response = await apiClient.post("/signup", data);
+  
+      if (response.status === 200) {
+        setUserModal(false);
+      }
+    } catch (e) {
+      console.log("error in creating user", e);
+    }
+  };
+    return (
     <>
       <Card>
         <CardContent>
@@ -188,7 +229,7 @@ useEffect(() => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={handleViewRoleData}
+                onClick={()=>{}}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
@@ -234,6 +275,21 @@ useEffect(() => {
             <Grid item>
               <Button
                 variant="contained"
+                onClick={handleUserModal}
+                sx={{
+                  backgroundColor: "#ff4013",
+                  "&:hover": {
+                    backgroundColor: "#0d2e4e",
+                    color: "#fff",
+                  },
+                }}
+              >
+                Create User
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
@@ -272,13 +328,7 @@ useEffect(() => {
             fullWidth
             margin="normal"
           />
-          <TextField
-            label="Role Value (ID)"
-            value={roleValue}
-            onChange={(e) => setRoleValue(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
+          
           <Button variant="contained" onClick={handleCreateRole}>
             Create
           </Button>
@@ -408,6 +458,107 @@ useEffect(() => {
   
   </div>
 </Modal>
+  {/* User Modal */}
+  <Modal open={userModal} onClose={handleCloseUserModal}>
+  <div
+    style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "white",
+      padding: "20px",
+      maxHeight:"80vh",
+      overflow:"scroll"
+    }}
+  >
+    <Typography variant="h6" gutterBottom>
+      Create User
+    </Typography>
+    <TextField
+            label="First Name"
+            value={firstname}
+            onChange={(e) => setFirstname(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+    <TextField
+            label="Last Name"
+            value={lastname}
+            onChange={(e) => setLastname(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+    <TextField
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+            type="email"
+            margin="normal"
+          />
+    <TextField
+            label="PhoneNumber"
+            value={phonenumber}
+            onChange={(e) => setPhonenumber(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+    <TextField
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            margin="normal"
+            type="Password"
+          />
+    <TextField
+            label="Company"
+            value={companyname}
+            onChange={(e) => setcompanyname(e.target.value)}
+            fullWidth
+            margin="normal"
+            
+          />
+
+  
+          <Select
+          labelId="demo-simple-select-filled-label"
+          id="demo-simple-select-filled"
+          value={role}
+          onChange={(e) => setRole(e.target.value)} 
+
+          fullWidth
+          label="Roles"
+          sx={{color:"black"}}
+        >
+         {Rolelist?.map((role,index) => (
+
+           <MenuItem value={role} key={index} >{role}</MenuItem> 
+         ))}
+        </Select>
+
+         
+      <Grid item>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#ff4013",
+                  "&:hover": {
+                    backgroundColor: "#0d2e4e",
+                    color: "#fff",
+                  },
+                  mt:2
+                }}
+                onClick={() => createUser()}
+              >
+                Create
+              </Button>
+            </Grid>     
+  
+  </div>
+</Modal>
+ <Table/> 
     </>
   );
 };
