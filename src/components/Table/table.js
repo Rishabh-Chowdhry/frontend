@@ -1,42 +1,105 @@
+import MUIDataTable from "mui-datatables";
+import React, { useState, useEffect } from "react";
+import apiClient from "../../Instances/client";
+import { Chip } from "@mui/material";
+const Table = ({ onUserCreated }) => {
+  const [userlist, setuserlist] = useState([]);
+  const columns = [
+    {
+      label: (
+        <div style={{ fontSize: "15px", fontWeight: 600 }}>First Name</div>
+      ),
+      name: "firstname",
+    },
+    {
+      label: <div style={{ fontSize: "15px", fontWeight: 600 }}>Last Name</div>,
+      name: "lastname",
+    },
 
-import MUIDataTable from 'mui-datatables';
-import React, { useState,useEffect } from 'react';
-import apiClient from '../../Instances/client';
-const Table = () => {
-  const [userlist,setuserlist]=useState([]) 
-  const columns = ["firstname","lastname","email","phonenumber","companyname"];
-  
-  const data=async()=>{
-    try{
-        const res=await apiClient.get("/get-all-user")
-        setuserlist(res.data.data)
-        console.log("api response", res.data.data)
-        console.log("api data",userlist)
-    }catch(e){
-    console.log("error from table getting all user",e)
+    {
+      label: (
+        <div style={{ fontSize: "15px", fontWeight: 600 }}>Email Address</div>
+      ),
+      name: "email",
+    },
+    {
+      label: (
+        <div style={{ fontSize: "15px", fontWeight: 600 }}>Phone Number</div>
+      ),
+      name: "phonenumber",
+    },
+    {
+      label: (
+        <div style={{ fontSize: "15px", fontWeight: 600 }}>Company Name</div>
+      ),
+      name: "companyname",
+    },
+    {
+      label: <div style={{ fontSize: "15px", fontWeight: 600 }}>Roles</div>,
+      name: "role",
+    },
+    {
+      label: (
+        <div style={{ fontSize: "15px", fontWeight: 600 }}>Permissions</div>
+      ),
+      name: "permissions",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => (
+          <>
+            {value.map((v) => (
+              <Chip
+                label={v}
+                sx={{
+                  margin: "5px",
+                  backgroundColor: "#ff4013",
+                  "&:hover": {
+                    backgroundColor: "#0d2e4e",
+                    fontWeight: 550,
+                    color: "#fff",
+                    cursor: "not-allowed",
+                  },
+                }}
+              />
+            ))}
+          </>
+        ),
+      },
+    },
+  ];
 
-}  
-}
-useEffect(() => {
-    console.log("requsted from db",userlist)
+  const data = async () => {
+    try {
+      const res = await apiClient.get("/get-all-user");
+      setuserlist(res.data.data);
+      console.log("api response", res.data.data);
+      console.log(userlist, "rweewrewrwerewrewrwewerrew");
+    } catch (e) {
+      console.log("error from table getting all user", e);
+    }
+  };
+  useEffect(() => {
+    console.log("requsted from db", userlist);
     data();
- }, []);
- const options = {
-    selectableRows: false, // Set this option to false to remove the checkbox from the header
+  }, [onUserCreated]);
+  const options = {
+    selectableRows: false,
+    onRowClick: (rowData, rowMeta) => {
+      // Implement your edit logic here
+      console.log("Edit user with ID:", userlist[rowMeta.dataIndex].id);
+      // You can open a modal or navigate to an edit page, etc.
+    },
   };
 
-
   return (
-    <div style={{marginTop:"12px"}}>
+    <div style={{ marginTop: "12px" }}>
       <MUIDataTable
-        filter={false}
         title={"User Data"}
         data={userlist || []}
         columns={columns}
-         options={options}
+        options={options}
       />
     </div>
   );
-}
+};
 
 export default Table;

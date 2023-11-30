@@ -14,99 +14,106 @@ import {
   TextField,
   Typography,
   Select,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import apiClient from "../../Instances/client";
-import { Table } from "../../components";
+import { AssignPermissionModal, Table } from "../../components";
 const UserManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [PermissionModal, setPermissionModal] = useState(false);
   const [roleName, setRoleName] = useState("");
- 
+
   const [permissonName, setPermissionName] = useState("");
   const [description, setDescriotion] = useState("");
   const [Category, setCategory] = useState("");
-  const [permissionlist,setpermissionlist]=useState()
-  const [Rolelist,setRolelist]=useState()
+  const [permissionlist, setpermissionlist] = useState();
+  const [Rolelist, setRolelist] = useState();
   const [value, setValue] = React.useState("");
-  const [ViewPermissionModal,setViewPermissionModal]=useState(false);
-  const [ViewRoleModal,setViewRoleModal]=useState(false);
-  const [userModal,setUserModal]=useState(false)
-  const [firstname,setFirstname]=useState("")
-  const [lastname,setLastname]=useState("")
-  const [email,setEmail]=useState("")
-  const [role,setRole]=useState("")
-  const [password,setPassword]=useState("")
-  const[phonenumber,setPhonenumber]=useState("")
-  const [companyname,setcompanyname]=useState("")
-const handleOpenViewRoleModal=()=>{
-  setViewRoleModal(true)
-}
-const handleCloseViewRoleModal=()=>{
-  setViewRoleModal(false)
-}
-const handleOpenViewPermissionModal=()=>{
-  setViewPermissionModal(true)
-}
-const handleCloseViewPermissionModal=()=>{
-  setViewPermissionModal(false)
-}
-const handleViewRoleData=async()=>{
-  try {
-    console.log("Fetching roles data...");
-    const response = await apiClient.get("/get-roles");
-    console.log("API response:", response);
+  const [ViewPermissionModal, setViewPermissionModal] = useState(false);
+  const [ViewRoleModal, setViewRoleModal] = useState(false);
+  const [userModal, setUserModal] = useState(false);
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+  const [password, setPassword] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
+  const [companyname, setcompanyname] = useState("");
+  const [assignPermissionModal, setAssignPermissionModal] = useState(false);
+  const [userlist, setuserlist] = useState([]);
+  const handleOpenAssignPermissonModal = () => {
+    console.log("open");
+    setAssignPermissionModal(!assignPermissionModal);
+  };
 
-    setRolelist(response.data.roleNames);
-    console.log("Role list:", Rolelist);
-  } catch (error) {
-    console.error("Error fetching permissions data:", error);
-  }  
-}
-const handleViewPermmisonData = async () => {
-  try {
-    console.log("Fetching permissions data...");
-    const response = await apiClient.get("/get-permissions");
-    console.log("API response:", response);
+  const handleOpenViewRoleModal = () => {
+    setViewRoleModal(true);
+  };
+  const handleCloseViewRoleModal = () => {
+    setViewRoleModal(false);
+  };
+  const handleOpenViewPermissionModal = () => {
+    setViewPermissionModal(true);
+  };
+  const handleCloseViewPermissionModal = () => {
+    setViewPermissionModal(false);
+  };
+  const handleViewRoleData = async () => {
+    try {
+      console.log("Fetching roles data...");
+      const response = await apiClient.get("/get-roles");
+      console.log("API response:", response);
 
-    setpermissionlist(response.data.permissionsName);
-    console.log("Permission list:", permissionlist);
-  } catch (error) {
-    console.error("Error fetching permissions data:", error);
-  }
-};
+      setRolelist(response.data.roleNames);
+      console.log("Role list:", Rolelist);
+    } catch (error) {
+      console.error("Error fetching permissions data:", error);
+    }
+  };
+  const handleViewPermmisonData = async () => {
+    try {
+      console.log("Fetching permissions data...");
+      const response = await apiClient.get("/get-permissions");
+      console.log("API response:", response);
 
-useEffect(() => {
-  console.log("List",Rolelist)
-  // Fetch data when the component mounts
-  handleViewRoleData ()
-}, []); // Empty dependency array ensures the effect runs only once
-useEffect(() => {
-  console.log("List",permissionlist)
-  // Fetch data when the component mounts
-  handleViewPermmisonData ()
-}, []); // Empty dependency array ensures the effect runs only once
- const handleCreateRole=async()=>{
-  try{
-    const requestData = {
-      roleName: roleName,
- 
-      // Add other data as needed
-    };
-    console.log("checkk",requestData)
-    const response = await apiClient.post('/create-roles',requestData);
-    console.log(response.data, "Role created successfully");
+      setpermissionlist(response.data.permissionsName);
+      console.log("Permission list:", permissionlist);
+    } catch (error) {
+      console.error("Error fetching permissions data:", error);
+    }
+  };
 
-    // Reset form fields and close the modal after role creation
-    setRoleName("");
+  useEffect(() => {
+    console.log("List", Rolelist);
+    // Fetch data when the component mounts
     handleViewRoleData();
- 
-    setIsModalOpen(false);
-   }catch(error){
-    console.error('Error creating Role:', error.message);
-   }
- }
+  }, []); // Empty dependency array ensures the effect runs only once
+  useEffect(() => {
+    console.log("List", permissionlist);
+    // Fetch data when the component mounts
+    handleViewPermmisonData();
+  }, []); // Empty dependency array ensures the effect runs only once
+  const handleCreateRole = async () => {
+    try {
+      const requestData = {
+        roleName: roleName,
+
+        // Add other data as needed
+      };
+      console.log("checkk", requestData);
+      const response = await apiClient.post("/create-roles", requestData);
+      console.log(response.data, "Role created successfully");
+
+      // Reset form fields and close the modal after role creation
+      setRoleName("");
+      handleViewRoleData();
+
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error creating Role:", error.message);
+    }
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -127,7 +134,6 @@ useEffect(() => {
   };
 
   const handleCreatePermissionModal = async () => {
-
     try {
       const permissionData = {
         name: permissonName,
@@ -135,30 +141,27 @@ useEffect(() => {
         category: Category,
         isActive: true,
       };
-  
+
       const res = await apiClient.post("/create-permissions", permissionData);
-  
+
       // Handle the response as needed
       console.log("Permission created successfully:", res.data);
-  
+
       // You might want to do something else with the response, depending on your application
-      handleViewPermmisonData()
+      handleViewPermmisonData();
     } catch (error) {
       console.error("Error creating permission:", error);
-  
+
       // Handle the error appropriately
       // For example, show an error message to the user or perform additional actions
-  
     }
   };
-  const handleUserModal=()=>{
+  const handleUserModal = () => {
     setUserModal(true);
-    
-  }
-  const handleCloseUserModal=()=>{
+  };
+  const handleCloseUserModal = () => {
     setUserModal(false);
-    
-  }
+  };
   const createUser = async () => {
     try {
       const data = {
@@ -170,17 +173,37 @@ useEffect(() => {
         role: role.toString(),
         companyname: companyname,
       };
-  
+
       const response = await apiClient.post("/signup", data);
-  
-      if (response.status === 200) {
+
+      if (response.status === 201) {
         setUserModal(false);
+        setRoleName("");
+        handleViewRoleData();
+        setEmail("");
+        setFirstname("");
+        setLastname("");
+        setPassword("");
+        setPhonenumber("");
+        setcompanyname("");
       }
     } catch (e) {
       console.log("error in creating user", e);
     }
   };
-    return (
+  const handleViewUserData = async () => {
+    try {
+      console.log("Fetching user data...");
+      const response = await apiClient.get("/get-all-user");
+      console.log("API response:", response);
+
+      setuserlist(response.data.data);
+      console.log("User list:", userlist);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+  return (
     <>
       <Card>
         <CardContent>
@@ -229,15 +252,14 @@ useEffect(() => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={()=>{}}
+                onClick={handleOpenAssignPermissonModal}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
                     backgroundColor: "#0d2e4e",
                     color: "#fff",
                   },
-                }
-              }
+                }}
               >
                 Assign Permissions
               </Button>
@@ -287,7 +309,7 @@ useEffect(() => {
                 Create User
               </Button>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Button
                 variant="contained"
                 sx={{
@@ -300,7 +322,7 @@ useEffect(() => {
               >
                 Edit
               </Button>
-            </Grid>
+            </Grid> */}
             {/* Other buttons */}
           </Grid>
         </CardContent>
@@ -328,7 +350,7 @@ useEffect(() => {
             fullWidth
             margin="normal"
           />
-          
+
           <Button variant="contained" onClick={handleCreateRole}>
             Create
           </Button>
@@ -389,107 +411,108 @@ useEffect(() => {
         </div>
       </Modal>
       {/* Permissions View Modal */}
-      <Modal open={ViewPermissionModal} onClose={handleCloseViewPermissionModal}>
-  <div
-    style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: "white",
-      padding: "20px",
-    }}
-  >
-    <Typography variant="h6" gutterBottom>
-      View Permissions
-    </Typography>
-   
-    {permissionlist && (
-  <Stack direction={"row"} spacing={1}>
-    {permissionlist.map((permission, index) => (
-      <Chip
-        key={index}
-        label={permission}
-        sx={{
-          backgroundColor: "#ff4013",
-          color: "white",
-        }}
+      <Modal
+        open={ViewPermissionModal}
+        onClose={handleCloseViewPermissionModal}
       >
-        {permission}
-      </Chip>
-    ))}
-  </Stack>
-)}
-  
-  </div>
-</Modal>
-  {/* Role View Modal */}
-  <Modal open={ViewRoleModal} onClose={handleCloseViewRoleModal}>
-  <div
-    style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: "white",
-      padding: "20px",
-    }}
-  >
-    <Typography variant="h6" gutterBottom>
-      View Role
-    </Typography>
-   
-    {Rolelist && (
-  <Stack direction={"row"} spacing={1}>
-    {Rolelist.map((role, index) => (
-      <Chip
-        key={index}
-        label={role}
-        sx={{
-          backgroundColor: "#ff4013",
-          color: "white",
-        }}
-      >
-        {role}
-      </Chip>
-    ))}
-  </Stack>
-)}
-  
-  </div>
-</Modal>
-  {/* User Modal */}
-  <Modal open={userModal} onClose={handleCloseUserModal}>
-  <div
-    style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: "white",
-      padding: "20px",
-      maxHeight:"80vh",
-      overflow:"scroll"
-    }}
-  >
-    <Typography variant="h6" gutterBottom>
-      Create User
-    </Typography>
-    <TextField
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            padding: "20px",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            View Permissions
+          </Typography>
+
+          {permissionlist && (
+            <Stack direction={"row"} spacing={1}>
+              {permissionlist.map((permission, index) => (
+                <Chip
+                  key={index}
+                  label={permission}
+                  sx={{
+                    backgroundColor: "#ff4013",
+                    color: "white",
+                  }}
+                >
+                  {permission}
+                </Chip>
+              ))}
+            </Stack>
+          )}
+        </div>
+      </Modal>
+      {/* Role View Modal */}
+      <Modal open={ViewRoleModal} onClose={handleCloseViewRoleModal}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            padding: "20px",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            View Role
+          </Typography>
+
+          {Rolelist && (
+            <Stack direction={"row"} spacing={1}>
+              {Rolelist.map((role, index) => (
+                <Chip
+                  key={index}
+                  label={role}
+                  sx={{
+                    backgroundColor: "#ff4013",
+                    color: "white",
+                  }}
+                >
+                  {role}
+                </Chip>
+              ))}
+            </Stack>
+          )}
+        </div>
+      </Modal>
+      {/* User Modal */}
+      <Modal open={userModal} onClose={handleCloseUserModal}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            padding: "20px",
+            maxHeight: "80vh",
+            overflow: "scroll",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Create User
+          </Typography>
+          <TextField
             label="First Name"
             value={firstname}
             onChange={(e) => setFirstname(e.target.value)}
             fullWidth
             margin="normal"
           />
-    <TextField
+          <TextField
             label="Last Name"
             value={lastname}
             onChange={(e) => setLastname(e.target.value)}
             fullWidth
             margin="normal"
           />
-    <TextField
+          <TextField
             label="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -497,14 +520,14 @@ useEffect(() => {
             type="email"
             margin="normal"
           />
-    <TextField
+          <TextField
             label="PhoneNumber"
             value={phonenumber}
             onChange={(e) => setPhonenumber(e.target.value)}
             fullWidth
             margin="normal"
           />
-    <TextField
+          <TextField
             label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -512,53 +535,56 @@ useEffect(() => {
             margin="normal"
             type="Password"
           />
-    <TextField
+          <TextField
             label="Company"
             value={companyname}
             onChange={(e) => setcompanyname(e.target.value)}
             fullWidth
             margin="normal"
-            
           />
 
-  
           <Select
-          labelId="demo-simple-select-filled-label"
-          id="demo-simple-select-filled"
-          value={role}
-          onChange={(e) => setRole(e.target.value)} 
+            labelId="demo-simple-select-filled-label"
+            id="demo-simple-select-filled"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            fullWidth
+            label="Roles"
+            sx={{ color: "black" }}
+          >
+            {Rolelist?.map((role, index) => (
+              <MenuItem value={role} key={index}>
+                {role}
+              </MenuItem>
+            ))}
+          </Select>
 
-          fullWidth
-          label="Roles"
-          sx={{color:"black"}}
-        >
-         {Rolelist?.map((role,index) => (
-
-           <MenuItem value={role} key={index} >{role}</MenuItem> 
-         ))}
-        </Select>
-
-         
-      <Grid item>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#ff4013",
-                  "&:hover": {
-                    backgroundColor: "#0d2e4e",
-                    color: "#fff",
-                  },
-                  mt:2
-                }}
-                onClick={() => createUser()}
-              >
-                Create
-              </Button>
-            </Grid>     
-  
-  </div>
-</Modal>
- <Table/> 
+          <Grid item>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#ff4013",
+                "&:hover": {
+                  backgroundColor: "#0d2e4e",
+                  color: "#fff",
+                },
+                mt: 2,
+              }}
+              onClick={() => createUser()}
+            >
+              Create
+            </Button>
+          </Grid>
+        </div>
+      </Modal>
+      {assignPermissionModal && (
+        <AssignPermissionModal
+          onClose={() => {
+            setAssignPermissionModal(!assignPermissionModal);
+          }}
+        />
+      )}
+      <Table onUserCreated={handleViewUserData} />
     </>
   );
 };

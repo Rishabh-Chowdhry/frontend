@@ -35,15 +35,10 @@ const data = [
 axios.defaults.withCredentials = true;
 let firstRender = true;
 const Home = () => {
-  const [user, setUser] = useState();
-
-  const [initialDataFetched, setInitialDataFetched] = useState(false);
-
+  const [user, setUser] = useState(null);
   const refreshToken = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/refresh", {
-        withCredentials: true,
-      });
+      const res = await apiClient.get("/refresh");
 
       if (!res || !res.data) {
         console.error("Response or data is undefined:", res);
@@ -66,6 +61,7 @@ const Home = () => {
       const data = res.data;
 
       if (data) {
+        console.log("Successfully fetched user", data);
         return data;
       } else {
         console.error("Data is undefined");
@@ -75,49 +71,32 @@ const Home = () => {
       throw error;
     }
   };
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (!initialDataFetched) {
-  //       const data = await sendRequest();
-  //       setUser(data.user);
-  //       setInitialDataFetched(true);
-  //     }
-  //   };
-
-  //   fetchData();
-
-  //   // Set up the interval only after the initial data is fetched
-  //   if (initialDataFetched) {
-  //     const interval = setInterval(() => {
-  //       refreshToken().then((data) => setUser(data.user));
-  //     }, 1000 * 29);
-
-  //     // Clear the interval when the component unmounts
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [initialDataFetched]);
   useEffect(() => {
     const fetchData = async () => {
-      if (!initialDataFetched) {
-        const data = await sendRequest();
-        setUser(data.user);
-        setInitialDataFetched(true);
+      if (firstRender) {
+        firstRender = false;
+        try {
+          const userData = await sendRequest();
+          setUser(userData.user);
+        } catch (error) {
+          // Handle error
+        }
       }
+
+      let interval = setInterval(async () => {
+        try {
+          const userData = await refreshToken();
+          setUser(userData.user);
+        } catch (error) {
+          // Handle error
+        }
+      }, 1000 * 29);
+
+      return () => clearInterval(interval);
     };
 
     fetchData();
-
-    // Set up the interval only after the initial data is fetched
-    const interval = setInterval(() => {
-      if (initialDataFetched) {
-        refreshToken().then((data) => setUser(data.user));
-      }
-    }, 1000 * 10);
-
-    // Clear the interval when the component unmounts
-    return () => clearInterval(interval);
-  }, []); // Empty dependency array to run the effect only once when the component mounts
+  }, []);
 
   return (
     <Container maxWidth="xl">
