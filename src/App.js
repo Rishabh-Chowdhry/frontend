@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Drawer } from "./components";
+import { AgentDashboard } from "./container";
 function App() {
   const token = sessionStorage.getItem("token");
   return (
@@ -41,6 +42,15 @@ function App() {
             }
           />
           <Route
+            path="/agent-dashboard"
+            element={
+              <ProtectedRoute roles={["agent"]}>
+                <AgentDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             exact
             path="/"
             element={
@@ -53,6 +63,7 @@ function App() {
     </div>
   );
 }
+
 const ProtectedRoute = ({ children }) => {
   // const { token } = useAuth();
   // console.log("dd", token)

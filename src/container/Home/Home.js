@@ -32,70 +32,29 @@ const data = [
   { name: "Service F", uv: 2390, pv: 3800, amt: 2500 },
   { name: "Service G", uv: 3490, pv: 4300, amt: 2100 },
 ];
-axios.defaults.withCredentials = true;
-let firstRender = true;
 const Home = () => {
   const [user, setUser] = useState(null);
-  const refreshToken = async () => {
-    try {
-      const res = await apiClient.get("/refresh");
-
-      if (!res || !res.data) {
-        console.error("Response or data is undefined:", res);
-        throw new Error("Response or data is undefined");
-      }
-
-      const data = res.data;
-      return data;
-    } catch (error) {
-      console.error("Error in refreshToken:", error.message);
-      throw error;
-    }
-  };
 
   const sendRequest = async () => {
     try {
-      const res = await apiClient.get("/user", {
-        withCredentials: true,
-      });
+      const res = await apiClient.get("/user");
       const data = res.data;
+      console.log("User data response:", data);
 
-      if (data) {
-        console.log("Successfully fetched user", data);
-        return data;
-      } else {
-        console.error("Data is undefined");
-      }
+      // Assuming the user object has firstname and lastname properties
+      setUser({
+        firstname: data.user.firstname,
+        lastname: data.user.lastname,
+      });
     } catch (error) {
       console.error("Error in sendRequest:", error.message);
       throw error;
     }
   };
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (firstRender) {
-        firstRender = false;
-        try {
-          const userData = await sendRequest();
-          setUser(userData.user);
-        } catch (error) {
-          // Handle error
-        }
-      }
-
-      let interval = setInterval(async () => {
-        try {
-          const userData = await refreshToken();
-          setUser(userData.user);
-        } catch (error) {
-          // Handle error
-        }
-      }, 1000 * 29);
-
-      return () => clearInterval(interval);
-    };
-
-    fetchData();
+    // Call the sendRequest function when the component mounts
+    sendRequest();
   }, []);
 
   return (

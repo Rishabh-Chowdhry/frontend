@@ -12,4 +12,7 @@ export { default as CreateRoleModal } from "./modal/createRoleModal";
 export { default as CreatePermissonModal } from "./modal/createPermissionModal";
 export { default as ViewPermissonModal } from "./modal/viewPermisssionModal";
 export { default as ViewRolesModal } from "./modal/viewRolesModal";
-export { default as EditModal } from "./modal/editModal";
+// export { default as DataGrid } from "./DataGrid/Grid";
+export { default as FormTable } from "./Table/formTable";
+export { default as EditFormModal } from "./modal/editFormModal";
+export { default as ViewFormModal } from "./modal/viewFormsModal";

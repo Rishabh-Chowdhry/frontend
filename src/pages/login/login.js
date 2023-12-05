@@ -1,124 +1,171 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
-import axios from "axios";
 import React, { useState } from "react";
+import { Box, Button, TextField, Snackbar, Alert } from "@mui/material";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { authActions } from "../../stores";
 import apiClient from "../../Instances/client";
+
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Invalid credentials"),
+  password: Yup.string().required("Invalid credentials"),
+});
+
 const Login = () => {
   const dispatch = useDispatch();
   const history = useNavigate();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const [inputs, setInputs] = useState({
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const initialValues = {
     email: "",
     password: "",
-  });
-  const handleChange = (e) => {
-    setInputs((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
   };
-  const sendRequest = async () => {
+
+  const sendRequest = async (values) => {
     try {
       const res = await apiClient.post("/login", {
-        email: inputs.email,
-        password: inputs.password,
+        email: values.email,
+        password: values.password,
       });
 
       const data = res.data;
-
-      // Assuming your API response contains a 'token' field
       const token = data.token;
-      console.log("Tokenn", token);
-      // Dispatch the login action with the token payload
-      if (token) {
+
+      if (token && res.status === 200) {
         sessionStorage.setItem("token", res.data.token);
         dispatch(authActions.login({ token }));
+
+        setSnackbarSeverity("success");
+        setSnackbarMessage("Login successful");
+        setSnackbarOpen(true); // Open Snackbar on successful login
+
+        const user = data.user;
+        if (user && user.role) {
+          const role = user.role;
+
+          if (role === "super_admin") {
+            history("/dashboard");
+          } else if (role === "agent") {
+            history("/agent-dashboard");
+          } else {
+            console.error("Unknown role");
+          }
+        } else {
+          console.error("Invalid user data");
+        }
       }
-
-      // Log the response data for debugging
-      console.log(data);
-
-      // Redirect to the dashboard
-      history("/dashboard");
     } catch (error) {
-      console.log(error); // Log the error for debugging
-      throw error; // Throw the error to be caught in the calling code
+      console.log(error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Invalid credentials");
+      setSnackbarOpen(true);
     }
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      // Your login logic, perhaps an API call
-      // If successful, dispatch the login action
-      sendRequest()
-        .then(() => dispatch(authActions.login()))
-        .then(() => history("/dashboard"));
+      await sendRequest(values);
     } catch (error) {
       console.error("Login failed:", error.message);
-      // Handle other error-related tasks
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <img
-          src="/assets/images/logo.png"
-          style={{
-            width: "30%",
-            height: "auto",
-            marginBottom: "2rem",
-            marginLeft: "35%",
-            marginTop: "5vh",
-          }}
-          alt=""
-        />
-        <Box
-          marginLeft="auto"
-          marginRight="auto"
-          width={300}
-          display="flex"
-          flexDirection={"column"}
-          justifyContent="center"
-          alignItems="center"
-        >
-          <TextField
-            name="email"
-            onChange={handleChange}
-            type={"email"}
-            value={inputs.email}
-            variant="outlined"
-            placeholder="Email"
-            margin="normal"
-            sx={{ width: "100%" }}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        <Form>
+          <img
+            src="/assets/images/logo.png"
+            style={{
+              width: "30%",
+              height: "auto",
+              marginBottom: "2rem",
+              marginLeft: "35%",
+              marginTop: "5vh",
+            }}
+            alt=""
           />
-          <TextField
-            name="password"
-            onChange={handleChange}
-            type="password"
-            value={inputs.password}
-            variant="outlined"
-            placeholder="Password"
-            margin="normal"
-            sx={{ width: "100%" }}
-          />
-          <Button
-            variant="contained"
-            type="submit"
-            sx={{ background: "#ff4013", width: "110%", mt: 3 }}
+          <Box
+            marginLeft="auto"
+            marginRight="auto"
+            width={300}
+            display="flex"
+            flexDirection={"column"}
+            justifyContent="center"
+            alignItems="center"
           >
-            Login
-          </Button>
-          <Button variant="text" sx={{ mt: 4 }}>
-            Forgot Password
-          </Button>
-          <Button variant="text" sx={{ mt: 4 }}>
-            Register
-          </Button>
-        </Box>
-      </form>
+            <Field
+              as={TextField}
+              name="email"
+              type="email"
+              label="Email"
+              variant="outlined"
+              placeholder="Email"
+              margin="normal"
+              sx={{ width: "100%" }}
+            />
+            <ErrorMessage
+              sx={{ color: "red", fontWeight: 600 }}
+              name="email"
+              component="div"
+            />
+
+            <Field
+              as={TextField}
+              name="password"
+              type="password"
+              label="Password"
+              placeholder="Password"
+              margin="normal"
+              sx={{ width: "100%" }}
+            />
+            <ErrorMessage
+              sx={{ color: "red", fontWeight: 600 }}
+              name="password"
+              component="div"
+            />
+
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{ background: "#ff4013", width: "110%", mt: 3 }}
+            >
+              Login
+            </Button>
+          </Box>
+        </Form>
+      </Formik>
+
+      {/* Snackbar for displaying messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

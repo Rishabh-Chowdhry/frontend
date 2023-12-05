@@ -3,7 +3,7 @@ import axios from "axios";
 const apiClient = axios.create({
   // baseURL: process.env.REACT_APP_baseURL,
   baseURL: process.env.REACT_APP_localURL,
-  withCredentials: true, // Set to true to send cookies with requests
+  withCredentials: false, // Set to true to send cookies with requests
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",

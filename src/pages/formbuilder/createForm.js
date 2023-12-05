@@ -15,6 +15,7 @@ import { Formik, useFormik } from "formik";
 import * as yup from "yup"; // Import Yup for form validation
 import { Create as CreateIcon } from "@mui/icons-material";
 import apiClient from "../../Instances/client";
+import { FormTable } from "../../components";
 const initialValues = {
   title: "",
   fields: [{ label: "", type: "" }], // Initialize fields as an array of objects
@@ -33,6 +34,7 @@ const formSchema = yup.object().shape({
 });
 
 const CreateForm = () => {
+  const [formlist, setFormlist] = useState([]);
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: formSchema,
@@ -45,14 +47,28 @@ const CreateForm = () => {
   const handleCloseModal = () => {
     setCreateFormModal(false);
   };
-const handleCreateForm=async()=>{
- try{
-  const response = await apiClient.post('/create-forms', formik.values);
-    console.log(response.data,"form data creation ")
- }catch(error){
-  console.error('Error creating form:', error.message);
- }
-}
+  const handleCreateForm = async () => {
+    try {
+      const response = await apiClient.post("/create-forms", formik.values);
+      console.log(response.data, "form data creation ");
+      if (response.status === 200) {
+        handleCloseModal();
+        formik.resetForm(); // Reset the form values
+      }
+    } catch (error) {
+      console.error("Error creating form:", error.message);
+    }
+  };
+  const getCreateFormTitle = async () => {
+    try {
+      const res = await apiClient.get("/get-forms");
+      setFormlist(res.data.formtitles);
+      console.log("api response", res.data.formTitles);
+      console.log(formlist, "rweewrewrwerewrewrwewerrew");
+    } catch (e) {
+      console.log("error from table getting all user", e);
+    }
+  };
   return (
     <>
       <Card>
@@ -81,36 +97,6 @@ const handleCreateForm=async()=>{
                 }}
               >
                 Create Form
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                // onClick={handleOpenModal}
-                sx={{
-                  backgroundColor: "#ff4013",
-                  "&:hover": {
-                    backgroundColor: "#0d2e4e",
-                    color: "#fff",
-                  },
-                }}
-              >
-                Edit Form
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                // onClick={handleOpenModal}
-                sx={{
-                  backgroundColor: "#ff4013",
-                  "&:hover": {
-                    backgroundColor: "#0d2e4e",
-                    color: "#fff",
-                  },
-                }}
-              >
-                View Created Form
               </Button>
             </Grid>
           </Grid>
@@ -269,6 +255,7 @@ const handleCreateForm=async()=>{
           </Stack>
         </div>
       </Modal>
+      <FormTable onFormCreated={getCreateFormTitle} />
     </>
   );
 };
