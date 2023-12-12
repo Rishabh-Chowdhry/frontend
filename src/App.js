@@ -1,12 +1,15 @@
-import { Main, Login } from "./pages";
+import { Main, Login, CreateForms } from "./pages";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
+  Outlet,
 } from "react-router-dom";
-import { Drawer } from "./components";
-import { AgentDashboard } from "./container";
+import { Drawer, TicketTable } from "./components";
+import CreateForm from "./pages/formbuilder/createForm";
+import { UserManagement } from "./container";
+import Reportbuilder from "./pages/ReportBuilder/reportbuilder";
 function App() {
   const token = sessionStorage.getItem("token");
   return (
@@ -34,22 +37,52 @@ function App() {
 
           {/* <Route path="/dashboard" element={<Drawer />} /> */}
           <Route
+            index
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <Drawer />
+                {/* Use Outlet to specify where child routes should be rendered */}
+                <Outlet />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/agent-dashboard"
+            path="/dashboard/form-builder"
             element={
-              <ProtectedRoute roles={["agent"]}>
-                <AgentDashboard />
+              <ProtectedRoute>
+                <Drawer />
+                <CreateForms />
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path="/dashboard/user-management"
+            element={
+              <ProtectedRoute>
+                <Drawer />
+                <UserManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/report-builder"
+            element={
+              <ProtectedRoute>
+                <Drawer />
+                <Reportbuilder />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/tickets-management"
+            element={
+              <ProtectedRoute>
+                <Drawer />
+                <TicketTable />
+              </ProtectedRoute>
+            }
+          />
           <Route
             exact
             path="/"

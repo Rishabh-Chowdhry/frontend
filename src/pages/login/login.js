@@ -51,7 +51,7 @@ const Login = () => {
         const user = data.user;
         if (user && user.role) {
           const role = user.role;
-
+          console.log("roles", role);
           if (role === "super_admin") {
             history("/dashboard");
           } else if (role === "agent") {

@@ -22,7 +22,7 @@ const FormTable = ({ onFormCreated }) => {
   const columns = [
     {
       field: "title",
-      headerName: "Form Title",
+      headerName: <b>Form Title</b>,
       width: 200,
       renderCell: (params) => (
         <div

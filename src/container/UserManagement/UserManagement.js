@@ -222,7 +222,6 @@ const UserManagement = () => {
             <Grid item>
               <Button
                 variant="contained"
-                onClick={handleOpenModal}
                 sx={{
                   backgroundColor: "#ff4013",
                   "&:hover": {
@@ -230,6 +229,7 @@ const UserManagement = () => {
                     color: "#fff",
                   },
                 }}
+                onClick={handleOpenModal}
               >
                 Create Role
               </Button>

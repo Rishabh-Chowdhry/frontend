@@ -16,3 +16,6 @@ export { default as ViewRolesModal } from "./modal/viewRolesModal";
 export { default as FormTable } from "./Table/formTable";
 export { default as EditFormModal } from "./modal/editFormModal";
 export { default as ViewFormModal } from "./modal/viewFormsModal";
+export { default as ReportTable } from "./Table/ReportTable";
+export { default as TicketTable } from "./Table/ticketTable";
+export { default as CreateTicketModal } from "./modal/createTicketModal";

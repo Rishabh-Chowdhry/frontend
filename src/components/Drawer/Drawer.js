@@ -16,14 +16,14 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import { Home, Mailbox, UserManagement } from "../../container";
+import { Home, UserManagement } from "../../container";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import SummarizeIcon from "@mui/icons-material/Summarize";
-import { CreateForms } from "../../pages";
+import { CreateForms, ReportBuilder } from "../../pages";
+import TicketTable from "../Table/ticketTable";
 
 const drawerWidth = 240;
 
@@ -33,7 +33,7 @@ const openedMixin = (theme) => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
-  backgroundColor: "#0d2e4e", // Add this line for the opened state
+  backgroundColor: "#0d2e4e",
   color: "white",
   overflowX: "hidden",
 });
@@ -44,7 +44,7 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: "hidden",
-  backgroundColor: "#0d2e4e", // Add this line for the opened state
+  backgroundColor: "#0d2e4e",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -56,7 +56,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -149,13 +148,13 @@ export default function MiniDrawer() {
           {[
             "Home",
             "Forms",
-            "Mailbox",
             "Users Management",
             "Report Builder",
+            "Tickets",
           ].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                onClick={() => setMenuData(text)} //
+                onClick={() => setMenuData(text)}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -177,9 +176,9 @@ export default function MiniDrawer() {
                     <AddBoxIcon sx={{ color: "white" }} />
                   ) : text === "Report Builder" ? (
                     <SummarizeIcon sx={{ color: "white" }} />
-                  ) : (
-                    text === "Mailbox" && <MailIcon sx={{ color: "white" }} />
-                  )}
+                  ) : text === "Tickets" ? (
+                    <ReceiptIcon sx={{ color: "white" }} />
+                  ) : null}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -191,9 +190,10 @@ export default function MiniDrawer() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {menuData === "Home" && <Home />}
-        {menuData === "Mailbox" && <Mailbox />}
         {menuData === "Users Management" && <UserManagement />}
         {menuData === "Forms" && <CreateForms />}
+        {menuData === "Report Builder" && <ReportBuilder />}
+        {menuData === "Tickets" && <TicketTable />}
       </Box>
     </Box>
   );
